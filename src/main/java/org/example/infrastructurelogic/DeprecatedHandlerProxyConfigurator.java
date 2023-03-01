@@ -11,16 +11,16 @@ public class DeprecatedHandlerProxyConfigurator implements ProxyConfigurator {
     public Object replaceWithProxyIfNeeded(Object t, Class implClass) {
         if (implClass.isAnnotationPresent(Deprecated.class)) {
             if (implClass.getInterfaces().length == 0) {
-                return Enhancer.create(implClass, (net.sf.cglib.proxy.InvocationHandler) (proxy, method, args) -> getInvocationHandlerLogic(t, method));
+                return Enhancer.create(implClass, (net.sf.cglib.proxy.InvocationHandler) (proxy, method, args) -> getInvocationHandlerLogic(t, method, args));
             }
-            return Proxy.newProxyInstance(implClass.getClassLoader(), implClass.getInterfaces(), (proxy, method, args) -> getInvocationHandlerLogic(t, method));
+            return Proxy.newProxyInstance(implClass.getClassLoader(), implClass.getInterfaces(), (proxy, method, args) -> getInvocationHandlerLogic(t, method, args));
         } else {
             return t;
         }
     }
 
-    private Object getInvocationHandlerLogic(Object t, Method method) throws IllegalAccessException, InvocationTargetException {
+    private Object getInvocationHandlerLogic(Object t, Method method, Object[] args) throws IllegalAccessException, InvocationTargetException {
         System.out.println("************* что ж ты делаешь урод, Deprecated метод юзаешь");
-        return method.invoke(t);
+        return method.invoke(t, args);
     }
 }
